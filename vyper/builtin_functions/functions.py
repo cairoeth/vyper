@@ -1259,12 +1259,15 @@ class Send(BuiltinFunction):
     _id = "send"
     _inputs = [("to", AddressDefinition()), ("value", Uint256Definition())]
     _return_type = None
+    _kwargs = {
+        "gas": KwargSettings(Uint256Definition(), "gas"),
+    }
 
     @process_inputs
     def build_IR(self, expr, args, kwargs, context):
         to, value = args
         context.check_is_not_constant("send ether", expr)
-        return IRnode.from_list(["assert", ["call", 0, to, value, 0, 0, 0, 0]])
+        return IRnode.from_list(["assert", ["call", kwargs["gas"], to, value, 0, 0, 0, 0]])
 
 
 class SelfDestruct(BuiltinFunction):
